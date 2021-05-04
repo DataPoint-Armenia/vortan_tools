@@ -18,6 +18,12 @@ Examples:
 - [python](https://www.python.org/downloads/)
 - [pip](https://pypi.org/project/pip/)
 
+## Setup
+
+```
+git clone --recursive https://github.com/DataPoint-Armenia/vortan_tools.git
+```
+
 ## Usage
 
 ### Tokenizer

@@ -1,7 +1,12 @@
 # vortan_tools
 ## About
 
-(todo) Tools to produce Armenian n-gram frequencies from corpora.
+Tools around the vortan project.
+
+Examples:
+- tokenizer (todo)
+- n-gram frequency generator (todo)
+- part of speech tagger (todo)
 
 ## Documentation
 
@@ -15,9 +20,31 @@
 
 ## Usage
 
-Right now I've just hooked up the Armtreebank/Tokenizer to run on a text file.
+### Tokenizer
+
+Wrapper around Armtreebank/Tokenizer
+
 ```
-python3 src/test.py
+python3 src/tokenizer.py
+```
+
+### Parser
+
+Wrapper around Armtreebank/End-to-end-Parser
+
+```
+pip3 install -r extern/End-to-end-Parser/requirements.txt --user
+python3 src/parser.py
+```
+
+Currently fails with this error:
+```
+Traceback (most recent call last):
+  File "src/parser.py", line 15, in <module>
+    res = model.predict_raw(input_text=filename)
+  File "./extern/End-to-end-Parser/predict.py", line 102, in predict_raw
+    raise ValueError("Couldn't tokenize the text")
+ValueError: Couldn't tokenize the text
 ```
 
 ## Contributors
@@ -27,4 +54,5 @@ python3 src/test.py
 ## Acknowledgements
 
 - https://github.com/Armtreebank/Tokenizer
+- https://github.com/Armtreebank/End-to-end-Parser
 

@@ -5,3 +5,15 @@ __pycache__/
 # vim
 *.swp
 *.swo
+
+# model
+*.in
+*.out
+*.conllu
+
+# mac
+.DS_Store
+
+# custom
+models/
+out/

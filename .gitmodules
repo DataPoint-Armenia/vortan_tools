@@ -1,3 +1,6 @@
-[submodule "Tokenizer"]
+[submodule "extern/Tokenizer"]
 	path = extern/Tokenizer
 	url = https://github.com/Armtreebank/Tokenizer
+[submodule "extern/End-to-end-Parser"]
+	path = extern/End-to-end-Parser
+	url = https://github.com/Armtreebank/End-to-end-Parser

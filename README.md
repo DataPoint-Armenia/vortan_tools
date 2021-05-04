@@ -1,5 +1,4 @@
-# vortan_tokenizer
-
+# vortan_tools
 ## About
 
 (todo) Tools to produce Armenian n-gram frequencies from corpora.

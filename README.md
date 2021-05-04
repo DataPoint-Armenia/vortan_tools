@@ -2,7 +2,7 @@
 
 ## About
 
-Tools to produce Armenian n-gram frequencies from corpora.
+(todo) Tools to produce Armenian n-gram frequencies from corpora.
 
 ## Documentation
 
@@ -13,3 +13,19 @@ Tools to produce Armenian n-gram frequencies from corpora.
 
 - [python](https://www.python.org/downloads/)
 - [pip](https://pypi.org/project/pip/)
+
+## Usage
+
+Right now I've just hooked up the Armtreebank/Tokenizer to run on a text file.
+```
+python3 src/test.py
+```
+
+## Contributors
+
+- [@sourencho](https://github.com/sourencho)
+
+## Acknowledgements
+
+- https://github.com/Armtreebank/Tokenizer
+

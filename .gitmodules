@@ -4,3 +4,6 @@
 [submodule "extern/End-to-end-Parser"]
 	path = extern/End-to-end-Parser
 	url = https://github.com/Armtreebank/End-to-end-Parser
+[submodule "extern/vortan_tokenizer"]
+	path = extern/vortan_tokenizer
+	url = https://github.com/DataPoint-Armenia/vortan_tokenizer

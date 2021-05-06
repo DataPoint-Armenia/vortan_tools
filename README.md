@@ -3,11 +3,6 @@
 
 Tools around the vortan project.
 
-Examples:
-- tokenizer (todo)
-- n-gram frequency generator (todo)
-- part of speech tagger (todo)
-
 ## Documentation
 
 - **Google Drive Folder**: [link](https://drive.google.com/drive/folders/1f1feyB_po6hS7TFvdvPWZ3Q6dSEDjklQ)
@@ -18,7 +13,27 @@ Examples:
 - [python](https://www.python.org/downloads/)
 - [pip](https://pypi.org/project/pip/)
 
+
+### Installation
+
+1. Clone the repo
+```
+git clone --recursive https://github.com/DataPoint-Armenia/vortan_tools.git
+```
+2. Install requirements
+```
+pip3 install -r requirements.txt --user
+```
+
 ## Usage
+
+### N-Grams
+
+Generate a json of 1-gram frequencies:
+```
+python3 src/gramify.py data txt
+less out/freq.json
+```
 
 ### Tokenizer
 

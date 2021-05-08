@@ -28,10 +28,11 @@ pip3 install -r requirements.txt --user
 
 ### N-Grams
 
-Generate a json of 1-gram frequencies:
+Generate n-gram frequency files:
 ```
 python3 src/gramify.py data txt
-less out/freq.json
+less out/uni_freq.txt
+less out/bi_freq.txt
 ```
 
 ### Tokenizer
@@ -59,6 +60,13 @@ Traceback (most recent call last):
   File "./extern/End-to-end-Parser/predict.py", line 102, in predict_raw
     raise ValueError("Couldn't tokenize the text")
 ValueError: Couldn't tokenize the text
+```
+
+## Testing
+
+Static type check your code:
+```
+python3 -m mypy src/gramify.py
 ```
 
 ## Contributors

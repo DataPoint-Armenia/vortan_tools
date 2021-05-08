@@ -16,4 +16,8 @@ __pycache__/
 
 # custom
 models/
-out/freq.json
+out/*.txt
+out/*.json
+
+# mypy
+.mypy_cache

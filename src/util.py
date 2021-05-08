@@ -1,7 +1,8 @@
 import codecs
+import epub
+from typing import Any
 
-
-def get_text_from_txt_file(filename):
+def get_text_from_txt_file(filename: str) -> str:
     try:
         f = codecs.open(filename, encoding='utf-8')
         f.seek(0)
@@ -12,7 +13,7 @@ def get_text_from_txt_file(filename):
     return text
 
 
-def get_text_from_epub_file(filename):
+def get_text_from_epub_file(filename: str) -> str:
     book = epub.open_epub(filename)
     for item in book.opf.manifest.values():
         try:
@@ -25,3 +26,8 @@ def get_text_from_epub_file(filename):
             pass
     book.close()
     return text
+
+# Expects an nltk.FreqDist
+def write_ngram_freq_to_file(freq_dist: Any, filename: str):
+    with open(filename, 'w+') as f:
+        f.writelines(f"{' '.join(k)} {v}\n" for k, v in freq_dist.items())

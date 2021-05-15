@@ -15,6 +15,7 @@ from nltk.util import ngrams
 from typing import List
 from typing import Any
 from typing import Tuple
+from multiprocessing import Pool
 
 from util import get_text_from_txt_file
 from util import get_text_from_epub_file
@@ -22,6 +23,9 @@ from util import write_ngram_freq_to_file
 
 sys.path.insert(0, './extern/vortan_tokenizer/')
 from tokenizer import Tokenizer
+
+AGENT_COUNT = 5 # number of workers
+CHUNK_SIZE = 5 # number of files to process at one
 
 
 def print_progress(i: int, total: int, ext: str) -> None:
@@ -32,10 +36,12 @@ def print_progress(i: int, total: int, ext: str) -> None:
 
 
 def get_words_from_txt_file(filename: str) -> List[str]:
+    sys.stderr.write(f"Parsing '{filename}'\n")
     return get_words_from_text(get_text_from_txt_file(filename))
 
 
 def get_words_from_epub_file(filename) -> List[str]:
+    sys.stderr.write(f"Parsing '{filename}'\n")
     return get_words_from_text(get_text_from_epub_file(filename))
 
 
@@ -51,42 +57,58 @@ def get_words_from_text(text: str) -> List[List[str]]:
         words.append(sentence)
     return words
 
-
-def process_files(path: str, exts: List[str]) -> Tuple[Any, Any]:
-    # Init
+def extract_ngrams(all_sentences: List[List[str]]) -> Tuple[Any, Any]:
     unigram_freqs = FreqDist()
     bigram_freqs = FreqDist()
+    for sentences in all_sentences:
+        for words in sentences:
+            unigram_freqs.update(ngrams(words, 1))
+            bigram_freqs.update(ngrams(words, 2))
+    return unigram_freqs, bigram_freqs
+
+def get_filenames(ext):
+    # get all .ext file paths recursively
+    files = [os.path.join(dirpath, f)
+             for dirpath, dirnames, files in os.walk(path)
+             for f in files if f.endswith('.' + ext)]
+    print("Found %d '%s' files" % (len(files), ext))
+    return files
+
+def get_parse_method(ext):
+    if ext == 'txt' or ext == 'html':
+        return get_words_from_txt_file
+    elif ext == 'epub' or ext == 'epub_;' or 'epub' in ext:
+        return get_words_from_epub_file
+    else:
+        sys.stderr.write('%s not supported.' % ext)
+        return None
+
+
+def get_sentences_from_files_async(path: str, exts: List[str]) -> List[List[str]]:
+    all_sentences = []
 
     # Process files
     for ext in exts:
-        # get all .ext file paths recursively
-        files = [os.path.join(dirpath, f)
-                 for dirpath, dirnames, files in os.walk(path)
-                 for f in files if f.endswith('.' + ext)]
-        sys.stderr.write("Found %d '%s' files\n" % (len(files), ext))
-        # for each file
-        for i, filename in enumerate(files):
-            sys.stderr.write(f"Parsing '{filename}' ({i+1}/{len(files)})\n")
+        files = get_filenames(ext)
+        method = get_parse_method(ext)
+        with Pool(processes=AGENT_COUNT) as pool:
+            all_sentences = pool.map(method, files, CHUNK_SIZE)
 
-            sys.stderr.write(f"- tokenizing\n")
-            if ext == 'txt' or ext == 'html':
-                sentences = get_words_from_txt_file(filename)
-            elif ext == 'epub' or ext == 'epub_;' or 'epub' in ext:
-                sentences = get_words_from_epub_file(filename)
-            else:
-                sys.stderr.write('%s not supported.' % ext)
+    return all_sentences
 
-            # Extract n-grams
-            sys.stderr.write(f"- extracting ngrams\n")
-            for words in sentences:
-                unigram_freqs.update(ngrams(words, 1))
-                bigram_freqs.update(ngrams(words, 2))
-            # Verbose
-            # print_progress(i+1, len(files), ext)
-        if files:
-            sys.stderr.write('\n')
-    sys.stderr.write("done processing files\n")
-    return unigram_freqs, bigram_freqs
+
+def get_sentences_from_files(path: str, exts: List[str]) -> List[List[str]]:
+    all_sentences = []
+
+    # Process files
+    for ext in exts:
+        files = get_filenames(ext)
+        method = get_parse_method(ext)
+        for filename in files:
+            sentences = method(filename)
+            all_sentences.append(sentences)
+
+    return all_sentences
 
 
 if __name__ == "__main__":
@@ -103,6 +125,10 @@ if __name__ == "__main__":
     uni_filename = "out/uni_freq.txt"
     bi_filename = "out/bi_freq.txt"
 
-    unigram_freqs, bigram_freqs = process_files(path, exts)
+    print(f"# Parsing files")
+    file_sentences = get_sentences_from_files(path, exts)
+    print(f"# Extracting ngrams")
+    unigram_freqs, bigram_freqs = extract_ngrams(file_sentences)
+    print(f"# Writing to files")
     write_ngram_freq_to_file(unigram_freqs, uni_filename)
     write_ngram_freq_to_file(bigram_freqs, bi_filename)

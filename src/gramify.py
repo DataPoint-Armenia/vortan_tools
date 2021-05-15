@@ -66,7 +66,9 @@ def process_files(path: str, exts: List[str]) -> Tuple[Any, Any]:
         sys.stderr.write("Found %d '%s' files\n" % (len(files), ext))
         # for each file
         for i, filename in enumerate(files):
-            sentenes: List[List[str]]
+            sys.stderr.write(f"Parsing '{filename}' ({i+1}/{len(files)})\n")
+
+            sys.stderr.write(f"- tokenizing\n")
             if ext == 'txt' or ext == 'html':
                 sentences = get_words_from_txt_file(filename)
             elif ext == 'epub' or ext == 'epub_;' or 'epub' in ext:
@@ -75,11 +77,12 @@ def process_files(path: str, exts: List[str]) -> Tuple[Any, Any]:
                 sys.stderr.write('%s not supported.' % ext)
 
             # Extract n-grams
+            sys.stderr.write(f"- extracting ngrams\n")
             for words in sentences:
                 unigram_freqs.update(ngrams(words, 1))
                 bigram_freqs.update(ngrams(words, 2))
             # Verbose
-            print_progress(i+1, len(files), ext)
+            # print_progress(i+1, len(files), ext)
         if files:
             sys.stderr.write('\n')
     sys.stderr.write("done processing files\n")

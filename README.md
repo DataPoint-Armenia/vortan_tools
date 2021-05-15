@@ -25,6 +25,14 @@ pip3 install -r requirements.txt --user
 
 ## Usage
 
+### Submodule
+
+Make sure to update submodules to the latest version
+```
+git pull --recurse-submodules
+git submodule update --remote --recursive
+```
+
 ### N-Grams
 
 Generate n-gram frequency files:

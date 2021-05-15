@@ -31,3 +31,4 @@ def get_text_from_epub_file(filename: str) -> str:
 def write_ngram_freq_to_file(freq_dist: Any, filename: str):
     with open(filename, 'w+') as f:
         f.writelines(f"{' '.join(k)} {v}\n" for k, v in freq_dist.items())
+    print(f"Wrote to {filename}")

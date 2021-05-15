@@ -39,14 +39,16 @@ def get_words_from_epub_file(filename) -> List[str]:
     return get_words_from_text(get_text_from_epub_file(filename))
 
 
-def get_words_from_text(text: str) -> List[str]:
+def get_words_from_text(text: str) -> List[List[str]]:
     words = []
     T = Tokenizer(text)
     T.segmentation().tokenization()
     for s in T.segments:
+        sentence = []
         for index, t in enumerate(s['tokens']):
             w = t[1] if index != 0 else t[1].lower()
-            words.append(w)
+            sentence.append(w)
+        words.append(sentence)
     return words
 
 
@@ -64,17 +66,18 @@ def process_files(path: str, exts: List[str]) -> Tuple[Any, Any]:
         sys.stderr.write("Found %d '%s' files\n" % (len(files), ext))
         # for each file
         for i, filename in enumerate(files):
-            words: List[str] = []
+            sentenes: List[List[str]]
             if ext == 'txt' or ext == 'html':
-                words = get_words_from_txt_file(filename)
+                sentences = get_words_from_txt_file(filename)
             elif ext == 'epub' or ext == 'epub_;' or 'epub' in ext:
-                words = get_words_from_epub_file(filename)
+                sentences = get_words_from_epub_file(filename)
             else:
                 sys.stderr.write('%s not supported.' % ext)
 
             # Extract n-grams
-            unigram_freqs.update(ngrams(words, 1))
-            bigram_freqs.update(ngrams(words, 2))
+            for words in sentences:
+                unigram_freqs.update(ngrams(words, 1))
+                bigram_freqs.update(ngrams(words, 2))
             # Verbose
             print_progress(i+1, len(files), ext)
         if files:

@@ -126,7 +126,7 @@ if __name__ == "__main__":
     bi_filename = "out/bi_freq.txt"
 
     print(f"# Parsing files")
-    file_sentences = get_sentences_from_files(path, exts)
+    file_sentences = get_sentences_from_files_async(path, exts)
     print(f"# Extracting ngrams")
     unigram_freqs, bigram_freqs = extract_ngrams(file_sentences)
     print(f"# Writing to files")

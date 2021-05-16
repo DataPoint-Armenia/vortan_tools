@@ -10,10 +10,12 @@ import os
 sys.path.insert(0, './extern/vortan_tokenizer/')
 from tokenizer import VortanTokenizer
 
+
 def tokenize(text):
     T = VortanTokenizer(text)
     T.segmentation().tokenization()
     return T
+
 
 if __name__ == "__main__":
 

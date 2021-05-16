@@ -2,24 +2,16 @@
 # This Python file uses the following encoding: utf-8
 
 from collections import Counter
-import json
-import epub
-import time
-import collections
-import operator
-import codecs
-import unicodedata
-import re
 import os
 import sys
-import nltk
 from nltk import FreqDist
 from nltk.util import ngrams
 from typing import List
 from typing import Any
 from typing import Tuple
-from multiprocessing import Pool
+from concurrent.futures import TimeoutError
 from codetiming import Timer
+from pebble import ProcessPool, ProcessExpired
 
 from util import get_text_from_txt_file
 from util import get_text_from_epub_file
@@ -28,14 +20,14 @@ from util import write_ngram_freq_to_file
 sys.path.insert(0, './extern/vortan_tokenizer/')
 from tokenizer import VortanTokenizer
 
-AGENT_COUNT = 5 # number of workers
-CHUNK_SIZE = 5 # number of files to process at one
+AGENT_COUNT = 5  # number of workers
+AGENT_TIMEOUT = 10000  # seconds
 
 
 def print_progress(i: int, total: int, ext: str) -> None:
     sys.stderr.write('\r')
     sys.stderr.write("Progress: {0:.1f}%".format(
-        i/float(total) * 100) + " of '%s'" % ext)
+        i / float(total) * 100) + " of '%s'" % ext)
     sys.stderr.flush()
 
 
@@ -73,6 +65,7 @@ def extract_ngrams(all_sentences: List[List[str]]) -> Tuple[Any, Any]:
             bigram_freqs.update(ngrams(words, 2))
     return unigram_freqs, bigram_freqs
 
+
 def get_filenames(ext):
     # get all .ext file paths recursively
     files = [os.path.join(dirpath, f)
@@ -80,6 +73,7 @@ def get_filenames(ext):
              for f in files if f.endswith('.' + ext)]
     print("Found %d '%s' files" % (len(files), ext))
     return files
+
 
 def get_parse_method(ext):
     if ext == 'txt' or ext == 'html':
@@ -98,8 +92,26 @@ def get_sentences_from_files_async(path: str, exts: List[str]) -> List[List[str]
     for ext in exts:
         files = get_filenames(ext)
         method = get_parse_method(ext)
-        with Pool(processes=AGENT_COUNT) as pool:
-            all_sentences = pool.map(method, files, CHUNK_SIZE)
+        with ProcessPool(max_workers=AGENT_COUNT) as pool:
+            future = pool.map(method, files, timeout=AGENT_TIMEOUT)
+            iterator = future.result()
+
+            # iterate over all results, if a computation timed out
+            # print it and continue to the next result
+            while True:
+                try:
+                    result = next(iterator)
+                    all_sentences.append(result)
+                except StopIteration:
+                    break
+                except ProcessExpired as error:
+                    print("%s. Exit code: %d" % (error, error.exitcode))
+                except Exception as error:
+                    print("function raised %s" % error)
+                    print(error.traceback)
+                except TimeoutError as error:
+                    print(
+                        f"Killing agent that took longer than {error.args[1]} seconds")
 
     return all_sentences
 

@@ -16,6 +16,7 @@ from typing import List
 from typing import Any
 from typing import Tuple
 from multiprocessing import Pool
+from codetiming import Timer
 
 from util import get_text_from_txt_file
 from util import get_text_from_epub_file
@@ -45,6 +46,7 @@ def get_words_from_epub_file(filename) -> List[str]:
     return get_words_from_text(get_text_from_epub_file(filename))
 
 
+# @Timer(text="tokenize: Elapsed time: {:.4f} seconds")
 def get_words_from_text(text: str) -> List[List[str]]:
     words = []
     T = Tokenizer(text)
@@ -57,6 +59,8 @@ def get_words_from_text(text: str) -> List[List[str]]:
         words.append(sentence)
     return words
 
+
+# @Timer(text="ngrams: Elapsed time: {:.4f} seconds")
 def extract_ngrams(all_sentences: List[List[str]]) -> Tuple[Any, Any]:
     unigram_freqs = FreqDist()
     bigram_freqs = FreqDist()
@@ -130,5 +134,5 @@ if __name__ == "__main__":
     print(f"# Extracting ngrams")
     unigram_freqs, bigram_freqs = extract_ngrams(file_sentences)
     print(f"# Writing to files")
-    write_ngram_freq_to_file(unigram_freqs, uni_filename)
-    write_ngram_freq_to_file(bigram_freqs, bi_filename)
+    write_ngram_freq_to_file(unigram_freqs, uni_filename, sort=True)
+    write_ngram_freq_to_file(bigram_freqs, bi_filename, sort=True)

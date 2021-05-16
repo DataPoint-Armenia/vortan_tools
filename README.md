@@ -37,14 +37,14 @@ git submodule update --remote --recursive
 
 Generate n-gram frequency files:
 ```
-python3 src/gramify.py data txt
+python3 src/gramify.py data/ txt
 less out/uni_freq.txt
 less out/bi_freq.txt
 ```
 
 ### Tokenizer
 
-Wrapper around Armtreebank/Tokenizer
+Wrapper around vortan_tokenizer
 
 ```
 python3 src/tokenizer.py

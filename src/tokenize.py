@@ -1,4 +1,5 @@
 #!/usr/bin/python
+# This Python file uses the following encoding: utf-8
 
 # modules
 from util import get_text_from_txt_file
@@ -7,10 +8,10 @@ import os
 
 # extern
 sys.path.insert(0, './extern/vortan_tokenizer/')
-from tokenizer import Tokenizer
+from tokenizer import VortanTokenizer
 
 def tokenize(text):
-    T = Tokenizer(text)
+    T = VortanTokenizer(text)
     T.segmentation().tokenization()
     return T
 

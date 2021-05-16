@@ -1,3 +1,6 @@
+#!/usr/bin/python
+# This Python file uses the following encoding: utf-8
+
 from collections import Counter
 import json
 import epub
@@ -23,7 +26,7 @@ from util import get_text_from_epub_file
 from util import write_ngram_freq_to_file
 
 sys.path.insert(0, './extern/vortan_tokenizer/')
-from tokenizer import Tokenizer
+from tokenizer import VortanTokenizer
 
 AGENT_COUNT = 5 # number of workers
 CHUNK_SIZE = 5 # number of files to process at one
@@ -49,7 +52,7 @@ def get_words_from_epub_file(filename) -> List[str]:
 # @Timer(text="tokenize: Elapsed time: {:.4f} seconds")
 def get_words_from_text(text: str) -> List[List[str]]:
     words = []
-    T = Tokenizer(text)
+    T = VortanTokenizer(text)
     T.segmentation().tokenization()
     for s in T.segments:
         sentence = []

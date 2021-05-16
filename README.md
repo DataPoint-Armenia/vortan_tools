@@ -29,6 +29,7 @@ pip3 install -r requirements.txt --user
 
 Make sure to update submodules to the latest version
 ```
+git submodule update --init
 git pull --recurse-submodules
 git submodule update --remote --recursive
 ```
@@ -47,7 +48,7 @@ less out/bi_freq.txt
 Wrapper around vortan_tokenizer
 
 ```
-python3 src/tokenizer.py
+python3 src/tokenize.py
 ```
 
 ### Parser

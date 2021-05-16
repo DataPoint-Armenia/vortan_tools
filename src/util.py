@@ -1,6 +1,8 @@
 import codecs
 import epub
 from typing import Any
+import io
+
 
 def get_text_from_txt_file(filename: str) -> str:
     try:
@@ -28,8 +30,11 @@ def get_text_from_epub_file(filename: str) -> str:
     return text
 
 # Expects an nltk.FreqDist
+
+
 def write_ngram_freq_to_file(freq_dist: Any, filename: str, sort: bool = False):
-    grams = sorted(freq_dist.items(), key = lambda x: x[1], reverse = True) if sorted else freq_dist.items()
-    with open(filename, 'w+') as f:
+    grams = sorted(freq_dist.items(
+    ), key=lambda x: x[1], reverse=True) if sorted else freq_dist.items()
+    with io.open(filename, 'w+', encoding="utf-8") as f:
         f.writelines(f"{' '.join(k)} {v}\n" for k, v in grams)
     print(f"Wrote to {filename}")

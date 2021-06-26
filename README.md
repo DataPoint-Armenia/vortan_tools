@@ -36,7 +36,15 @@ git submodule update --remote --recursive
 
 ### N-Grams
 
-Generate n-gram frequency files:
+Generate n-gram frequency files from sentences.
+Expects each row to be once sentence.
+```
+python3 src/gramify_sentences.py filename.txt
+less out/uni_freq.txt
+less out/bi_freq.txt
+```
+
+Generate n-gram frequency files from unformatted files:
 ```
 python3 src/gramify.py data/ txt
 less out/uni_freq.txt
@@ -48,7 +56,7 @@ less out/bi_freq.txt
 Wrapper around vortan_tokenizer
 
 ```
-python3 src/tokenize.py
+python3 src/vortan_tokenize.py
 ```
 
 ### Parser
